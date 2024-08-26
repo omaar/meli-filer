@@ -15,7 +15,7 @@ const router = Router();
 
 router.post("/start", upload.single("file"), startUpload);
 
-router.post("/chunk", uploadChunk);
+router.put("/chunk", uploadChunk);
 
 router.post("/complete", completeUpload);
 

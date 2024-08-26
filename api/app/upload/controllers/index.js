@@ -104,7 +104,7 @@ export const startUpload = async (req, res, next) => {
 
   createMultiPartdID(fileName)
     .then((uploadId) => {
-      return res.status(200).json({ uploadId });
+      return res.status(200).json({ status: 2000, uploadId });
     })
     .catch((error) => {
       return res.status(500).json({ message: error.message });
@@ -114,9 +114,13 @@ export const startUpload = async (req, res, next) => {
 export const uploadChunk = async (req, res, next) => {
   const { chunk, uploadId, partNumber, fileName } = req.body;
 
+  if (!chunk || !uploadId || !partNumber || !fileName) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
+
   uploadPart({ chunk, uploadId, partNumber, fileName })
     .then((data) => {
-      return res.status(200).json(data);
+      return res.status(200).json({ status: 200, data });
     })
     .catch((error) => {
       return res.status(500).json({ message: error.message });
@@ -125,6 +129,10 @@ export const uploadChunk = async (req, res, next) => {
 
 export const completeUpload = async (req, res, next) => {
   const { uploadId, parts, fileName } = req.body;
+
+  if (!uploadId || !parts || !fileName) {
+    return res.status(400).json({ message: "Missing parameters" });
+  }
 
   completeUploadFile({ uploadId, parts, fileName })
     .then((data) => {

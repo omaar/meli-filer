@@ -20,6 +20,9 @@ app.use(bodyParser.json());
 
 // // Middleware para autenticar usuarios
 //  app.use(Auth.verify);
+app.use("/status", (req, res, next) => {
+  res.status(200).send("OK");
+});
 
 app.use("/upload", UploadRouter);
 
