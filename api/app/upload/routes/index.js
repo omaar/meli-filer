@@ -5,6 +5,7 @@ import {
   startUpload,
   uploadChunk,
   completeUpload,
+  getPresignedUrls,
 } from "../controllers/index.js";
 
 // Move router
@@ -13,9 +14,11 @@ const upload = multer({ storage: storage });
 
 const router = Router();
 
-router.post("/start", upload.single("file"), startUpload);
+router.post("/start", startUpload);
 
-router.put("/chunk", uploadChunk);
+router.put("/chunk", upload.single("file"), uploadChunk);
+
+router.post("/chunk/sign", getPresignedUrls);
 
 router.post("/complete", completeUpload);
 

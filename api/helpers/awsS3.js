@@ -9,6 +9,7 @@ dotenv.config({ path: `.env.${NODE_ENV}` });
 const { AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION } = process.env;
 
 const s3Client = new S3Client({
+  useAccelerateEndpoint: true,
   credentials: {
     accessKeyId: AWS_ACCESS_KEY_ID,
     secretAccessKey: AWS_SECRET_ACCESS_KEY,
