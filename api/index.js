@@ -8,7 +8,7 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 const { HTTP_PORT } = process.env;
 const app = express();
 
-// import Auth from "./middlewares/auth.js";
+import Auth from "./middlewares/auth.js";
 import UploadRouter from "./app/upload/routes/index.js";
 
 app.use(cors());
@@ -19,7 +19,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // // Middleware para autenticar usuarios
-//  app.use(Auth.verify);
+app.use(Auth.verify);
+
 app.use("/status", (req, res, next) => {
   res.status(200).send("OK");
 });

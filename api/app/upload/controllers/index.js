@@ -124,8 +124,8 @@ const completeUploadFile = async (fileBody) => {
     if (!uploadId || !parts || !fileName) {
       return reject(new Error("Missing parameters"));
     }
-    console.log("uploadId", uploadId, fileName);
-    console.log("parts", parts);
+    // console.log("uploadId", uploadId, fileName);
+    // console.log("parts", parts);
     const sortedParts = parts
       .sort((p1, p2) => {
         if (p1.PartNumber < p2.PartNumber) {
@@ -140,7 +140,7 @@ const completeUploadFile = async (fileBody) => {
         ETag: part.ETag,
         PartNumber: index + 1,
       }));
-    console.log("sorted parts", parts);
+    // console.log("sorted parts", parts);
 
     const completeUploadFileParams = {
       Bucket: S3_BUCKET,

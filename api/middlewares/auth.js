@@ -1,24 +1,46 @@
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 
 dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
-const { JWT_SECRET } = process.env;
+const { RECAPTCHA_SECRET_KEY } = process.env;
 
 const Auth = {
   verify: async (req, res, next) => {
-    (req, res, next) => {
-      const token = req.headers["authorization"];
-      if (!token)
-        return res.status(401).json({ status: 401, msg: "Access Denied" });
+    const recaptchaToken = req.body.recaptchaToken;
 
-      jwt.verify(token, JWT_SECRET, (err, decoded) => {
-        if (err)
-          return res.status(403).json({ status: 403, msg: "Invalid Token" });
-        req.user = decoded;
-        next();
-      });
-    };
+    if (!recaptchaToken) {
+      return res.status(401).json({ status: 401, message: "Unauthorized" });
+    }
+
+    try {
+      // Verify reCAPTCHA token with Google
+      const verificationResponse = await fetch(
+        `https://www.google.com/recaptcha/api/siteverify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `secret=${RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`,
+        }
+      );
+
+      const verificationData = await verificationResponse.json();
+
+      // console.log("verificationData", verificationData);
+
+      if (verificationData.success) {
+        return next();
+      } else {
+        return res
+          .status(401)
+          .json({ status: 401, message: "Unauthorized token" });
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ status: 500, message: "Eror on Auth Method" });
+    }
   },
 };
 
