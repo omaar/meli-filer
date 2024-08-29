@@ -2,6 +2,7 @@ import {
   CreateMultipartUploadCommand,
   UploadPartCommand,
   CompleteMultipartUploadCommand,
+  GetObjectCommand,
 } from "@aws-sdk/client-s3";
 import s3Client from "../../../helpers/awsS3.js";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -107,6 +108,26 @@ const uploadPart = async (fileBody) => {
       return resolve({ ETag, partNumber });
     } catch (error) {
       return reject(new Error(error.message));
+    }
+  });
+};
+
+const generateSignedUrl = async (fileName) => {
+  return new Promise(async (resolve, reject) => {
+    const command = new GetObjectCommand({
+      Bucket: S3_BUCKET,
+      Key: fileName,
+    });
+
+    try {
+      const url = await getSignedUrl(s3Client, command, {
+        expiresIn: AWS_ETAG_EXPIRATION,
+      }); // URL válida por 24hrs
+      console.log("Signed URL:", url);
+      return resolve(url);
+    } catch (err) {
+      console.error("Error generating signed URL", err);
+      return reject(err);
     }
   });
 };
@@ -228,7 +249,13 @@ export const completeUpload = async (req, res, next) => {
 
   completeUploadFile({ uploadId, parts, fileName })
     .then((data) => {
-      return res.status(200).json({ location: data });
+      generateSignedUrl(fileName)
+        .then((url) => {
+          return res.status(200).json({ location: url });
+        })
+        .catch((error) => {
+          return res.status(500).json({ message: error.message });
+        });
     })
     .catch((error) => {
       return res.status(500).json({ message: error.message });
