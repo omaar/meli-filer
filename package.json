@@ -7,7 +7,8 @@
   "scripts": {
     "test": "",
     "start": "NODE_ENV=prod node index.js",
-    "dev-back": "NODE_ENV=dev nodemon api/index.js"
+    "dev": "NODE_ENV=dev nodemon index.js",
+    "build": "docker build -t meli-filer-api ."
   },
   "repository": {
     "type": "git",

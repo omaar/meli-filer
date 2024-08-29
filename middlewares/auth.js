@@ -7,6 +7,8 @@ const { RECAPTCHA_SECRET_KEY } = process.env;
 const Auth = {
   verify: async (req, res, next) => {
     const recaptchaToken = req.body.recaptchaToken;
+    // console.log("secret:", RECAPTCHA_SECRET_KEY);
+    // console.log("recaptchaToken", recaptchaToken);
 
     if (!recaptchaToken) {
       return res.status(401).json({ status: 401, message: "Unauthorized" });
