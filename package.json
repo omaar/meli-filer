@@ -5,10 +5,10 @@
   "main": "api/index.js",
   "type": "module",
   "scripts": {
-    "test": "",
     "start": "NODE_ENV=prod node index.js",
     "dev": "NODE_ENV=dev nodemon index.js",
-    "build": "docker build -t meli-filer-api ."
+    "build": "docker build -t meli-filer-api .",
+    "docker": "docker run -d --name meli-filer-api -p 3001:3001 --env-file .env.prod meli-filer-api"
   },
   "repository": {
     "type": "git",
